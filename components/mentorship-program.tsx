@@ -78,7 +78,7 @@ const guides = [
     students: 28,
     color: "bg-pink-500",
     initials: "SR",
-    image: "", // Will use fallback
+    image: "/Screenshot 2025-12-13 042008.png", // Will use fallback
     instagram: "@itsme_shagunrai",
     achievements: [
       "Bursting Myths in Female Fitness",
