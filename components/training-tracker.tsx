@@ -6,11 +6,15 @@ import { Check, ChevronLeft, ChevronRight, Flame, Target } from "lucide-react"
 export default function TrainingTracker() {
   const [trainedDays, setTrainedDays] = useState<Set<number>>(new Set())
   const scrollRef = useRef<HTMLDivElement>(null)
+  
+  // Get fresh date values on each render
   const today = new Date()
   const currentDay = today.getDate()
   const currentMonth = today.toLocaleDateString("en-US", { month: "long" })
   const currentYear = today.getFullYear()
   
+  // Ensure we're using the latest date for highlighting
+  const getCurrentDay = () => new Date().getDate()  
   // Create a unique key for localStorage based on year and month
   const storageKey = `unifit-training-tracker-${today.getFullYear()}-${today.getMonth()}`
 
@@ -34,12 +38,12 @@ export default function TrainingTracker() {
       localStorage.setItem(storageKey, JSON.stringify(Array.from(defaultData)))
     }
   }, [storageKey])
-
   // Save data to localStorage whenever trainedDays changes
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(Array.from(trainedDays)))
   }, [trainedDays, storageKey])
 
+  // Ensure we always have fresh date values
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
 
@@ -68,18 +72,24 @@ export default function TrainingTracker() {
     }
   }
 
+  // Scroll to current day only once when component mounts
   useEffect(() => {
+    // Force re-calculation of current day on mount
+    const now = new Date();
+    const todayDate = now.getDate();
+    
     if (scrollRef.current) {
-      const todayElement = scrollRef.current.querySelector(`[data-day="${currentDay}"]`)
+      const todayElement = scrollRef.current.querySelector(`[data-day="${todayDate}"]`);
       if (todayElement) {
-        todayElement.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" })
+        // Scroll to current day
+        todayElement.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
       }
     }
-  }, [currentDay])
+  }, []); // Empty dependency array means this runs only once on mount
 
   const trainedCount = trainedDays.size
-  const streakDays = calculateStreak(trainedDays, currentDay)
-  const consistency = currentDay > 0 ? Math.round((trainedCount / currentDay) * 100) : 0
+  const streakDays = calculateStreak(trainedDays, getCurrentDay())
+  const consistency = getCurrentDay() > 0 ? Math.round((trainedCount / getCurrentDay()) * 100) : 0
 
   return (
     <section id="tracker" className="py-24 px-4 bg-background">
@@ -139,27 +149,25 @@ export default function TrainingTracker() {
                     key={`header-${day}`}
                     data-day={day}
                     className={`h-12 flex flex-col items-center justify-center border-b border-r border-border/50 ${
-                      day === currentDay ? "bg-green-500/10" : ""
+                      day === getCurrentDay() ? "bg-green-500/10" : ""
                     }`}
                   >
                     <span className="text-[10px] text-muted-foreground uppercase leading-none">{getDayName(day)}</span>
                     <span
-                      className={`text-xs font-semibold leading-none mt-1 ${day === currentDay ? "text-green-500" : "text-foreground/70"}`}
+                      className={`text-xs font-semibold leading-none mt-1 ${day === getCurrentDay() ? "text-green-500" : "text-foreground/70"}`}
                     >
                       {day}
                     </span>
                   </div>
                 ))}
-
                 {/* GYM row: Label + Checkboxes */}
                 <div className="h-14 flex items-center gap-2 px-3 border-r border-border bg-card sticky left-0 z-10">
                   <span className="font-bold text-sm">GYM</span>
                 </div>
                 {days.map((day) => {
                   const isTrained = trainedDays.has(day)
-                  const isToday = day === currentDay
-                  const isFuture = day > currentDay
-
+                  const isToday = day === getCurrentDay()
+                  const isFuture = day > getCurrentDay()
                   return (
                     <div
                       key={`gym-${day}`}
@@ -203,8 +211,7 @@ export default function TrainingTracker() {
         </div>
 
         <p className="text-center text-sm text-muted-foreground">
-          {currentMonth} {currentYear} • Click any past day to mark your training
-        </p>
+          {new Date().toLocaleDateString("en-US", { month: "long" })} {new Date().getFullYear()} • Click any past day to mark your training        </p>
       </div>
     </section>
   )

@@ -11,6 +11,7 @@ export default function Navigation() {
   const [isTouring, setIsTouring] = useState(false)
   const [tourProgress, setTourProgress] = useState(0)
   const [tourTotal, setTourTotal] = useState(0)
+  const [currentDate, setCurrentDate] = useState("")
   const tourTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
@@ -20,6 +21,20 @@ export default function Navigation() {
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  // Date formatting effect
+  useEffect(() => {
+    const updateDate = () => {
+      const now = new Date()
+      const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }
+      setCurrentDate(now.toLocaleDateString('en-GB', options).replace(/ /g, ' '))
+    }
+
+    updateDate()
+    const dateInterval = setInterval(updateDate, 86400000) // Update every 24 hours
+
+    return () => clearInterval(dateInterval)
   }, [])
 
   const navLinks = [
@@ -106,6 +121,11 @@ export default function Navigation() {
               {link.label}
             </Link>
           ))}
+          
+          {/* Date Display - Placed at the end of navigation links */}
+          <div className="font-heading text-sm font-medium text-foreground/80 ml-4 pl-4 border-l border-foreground/20">
+            {currentDate}
+          </div>
         </div>
 
         <div className="flex items-center gap-4">

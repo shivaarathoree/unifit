@@ -112,6 +112,11 @@
   }
 }
 
+/* Training Tracker Current Day Highlight */
+.current-day-highlight {
+  background-color: hsl(var(--chart-1) / 0.1);
+}
+
 /* Custom Animations */
 @keyframes fadeInUp {
   from {

@@ -2234,6 +2234,16 @@
     border-color: hsl(var(--destructive));
   }
 
+  .border-foreground\/20 {
+    border-color: hsl(var(--foreground));
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-foreground\/20 {
+      border-color: color-mix(in oklab, hsl(var(--foreground)) 20%, transparent);
+    }
+  }
+
   .border-green-500 {
     border-color: var(--color-green-500);
   }
@@ -6621,6 +6631,10 @@
   --sidebar-accent-foreground: 0 0% 0%;
   --sidebar-border: 0 0% 20%;
   --sidebar-ring: 0 82% 53%;
+}
+
+.current-day-highlight {
+  background-color: hsl(var(--chart-1) / .1);
 }
 
 @keyframes fadeInUp {
