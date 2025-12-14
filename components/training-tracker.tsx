@@ -53,7 +53,7 @@ export default function TrainingTracker() {
   }
 
   const toggleDay = (day: number) => {
-    if (day > currentDay) return
+    if (day > getCurrentDay()) return
     setTrainedDays((prev) => {
       const newSet = new Set(prev)
       if (newSet.has(day)) {
